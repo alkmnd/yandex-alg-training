@@ -2,8 +2,8 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"os"
-	"sort"
 	"strconv"
 	"strings"
 )
@@ -19,8 +19,29 @@ func main() {
 	for i := 0; i < n; i++ {
 		arr[i], _ = strconv.Atoi(nums[i])
 	}
-	sort.Slice(arr, func(i, j int) bool {
-		return arr[i] > arr[j]
-	})
+
+	prefSums := make([]int, n+1)
+	for i := 1; i < n+1; i++ {
+		prefSums[i] = prefSums[i-1] + arr[i-1]
+	}
+
+	sufSums := make([]int, n+1)
+	for i := n - 1; i > -1; i-- {
+		sufSums[i] = sufSums[i+1] + arr[i]
+	}
+
+	ans := 0
+
+	for i := 1; i < n; i++ {
+		ans += arr[i] * i
+	}
+
+	nowSum := ans
+	for j := 1; j < n; j++ {
+		nowSum += prefSums[j] - sufSums[j]
+		ans = min(ans, nowSum)
+	}
+
+	fmt.Println(ans)
 
 }
